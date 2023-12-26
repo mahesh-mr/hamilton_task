@@ -7,7 +7,7 @@ import '../../model/profile_model.dart';
 import 'dio_client/dio_client.dart';
 
 class RestorentService {
-  ProfileModel loginModel = ProfileModel();
+  //ProfileModel loginModel = ProfileModel();
   static Future<List<Restorent>?> restorent() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //  SharedPreferences pref = await SharedPreferences.getInstance();
@@ -22,10 +22,10 @@ class RestorentService {
         ),
       );
       print("res : ${response.data}");
-      RestorentModel profileModel = RestorentModel.fromJson(response.data);
+      RestorentModel restorentModel = RestorentModel.fromJson(response.data);
       print("uid : $country");
-      print(profileModel);
-      return profileModel.data;
+      print(restorentModel.data![0].nameAr);
+      return restorentModel.data;
     } on DioError catch (e) {
       print("6656566565656556565  dist");
       print("${e.response!.data}===========");

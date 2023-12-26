@@ -32,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final phoneController = TextEditingController();
 
   final passController = TextEditingController();
-  String phoneNo = "";
+  String phoneNo = "91";
   String countryName= "";
   String alertText = "";
   final formkey = GlobalKey<FormState>();
@@ -245,11 +245,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                         final token = prefs.getString('token');
                         print("tok : $token");
-                        if (token != null) {
+                       
                           Get.offAll(LoginScreen(),
                               transition: Transition.noTransition,
                               duration: const Duration(seconds: 1));
-                        }
+                     
                       }
                     } else {
                       alertText = "Please select Terms and Conditions";

@@ -1,3 +1,272 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../model/login_model.dart';
+import '../../model/profile_model.dart';
+import '../../view/const/const.dart';
+import '../../view/const/size.dart';
+import '../../view/widgets/custom_appbar.dart';
+import '../../view/widgets/custom_listtaile.dart';
+import '../../view/widgets/eleveted_button_widget.dart';
+import '../controller/restorent_controller.dart';
+import 'dio_client/dio_client.dart';
+
+class ProfilesController extends GetxController {
+  RxBool loding = true.obs;
+  RxList<Profiles> profile = <Profiles>[].obs;
+  //LoginModel loginModel = LoginModel();
+
+  Future<List<Profiles>?> getProfileService() async {
+    try {
+      var data = await ProfileServices.profile();
+
+      loding.value = false;
+      return data;
+    } catch (e) {
+      Get.snackbar('warnig', 'Please check Internet Connection');
+      print(e);
+      print('catch bloc called');
+      loding.value = false;
+    }
+    return null;
+  }
+
+  @override
+  void onInit() {
+    getProfileService().then((value) => profile.value = value!);
+    update();
+    super.onInit();
+  }
+}
+
+class ProfileServices {
+  //LoginModel loginModel = LoginModel();
+  static Future<List<Profiles>?> profile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //  SharedPreferences pref = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String tk =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuZXdVc2VyIjp7ImNsaWVudF9uYW1lIjoicG9pIiwibWFpbCI6InBvQGdtYWlsLmNvbSIsImNvdW50cnkiOjEsImNsaWVudF9zdGF0dXMiOnRydWUsImNsaWVudF9waG9uZSI6IjIzMTU2NDg5NzAiLCJjbGllbnRfZ2VuZGVyIjowLCJjbGllbnRfaWQiOjIwMjQ4NTN9LCJpYXQiOjE3MDM1ODM3MjF9.k_9tHgj-nZmGsNo9OjCR3hDIC3A_s-K1ef821iZ8P30";
+    int? uid = prefs.getInt('clientId');
+    print("id : $uid");
+    print("tk : $token");
+    try {
+      var response = await DioClient.dio.get(
+        'profiles/get-profiles?ClientID=2024853&userid=2024853',
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+      );
+      print("res : ${response.data}");
+      ProfileModels profileModel = ProfileModels.fromJson(response.data);
+      // print("uid : $uid");
+      //  String name =profileModel.data![0].clientName ;
+      print("name : ${profileModel.data![0].clientName}");
+      return profileModel.data;
+    } on DioError catch (e) {
+      print("6656566565656556565  dist");
+      print("${e.response!.data}===========");
+      print("${e.message}=fdsfg=fd");
+    } catch (e) {
+      print("$e");
+    }
+    return null;
+  }
+}
+
+class TestPage extends StatelessWidget {
+  TestPage({super.key});
+  final profielsController = Get.put(ProfilesController());
+  final restorentController = Get.put(RestorentController());
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            profielsController.getProfileService();
+          },
+        ),
+        backgroundColor: appBackground,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const CustomAppbar(
+              leadingType: "1",
+              title: "Profile",
+              apbarType: "1",
+            ),
+            h20,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Obx(() {
+                  if (profielsController.loding.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final data = profielsController.profile[0];
+                  return Column(
+                    children: [
+                      const CircleAvatar(
+                        radius: 70,
+                        backgroundImage: NetworkImage(
+                            "https://manofmany.com/wp-content/uploads/2019/04/David-Gandy.jpg"),
+                      ),
+                      h10,
+                      Text(
+                        data.clientName!,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: appBlack),
+                      ),
+                      h10,
+                      Text(
+                        "@${data.username}",
+                        style:
+                            const TextStyle(fontSize: 16, color: appDarkGrey),
+                      ),
+                      h10,
+                      Text(
+                        data.bio ??
+                            "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy ",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16, color: appGrey),
+                      ),
+                      h10,
+                      SizedBox(
+                        height: 30,
+                        width: 250,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: const [
+                            Text(
+                              "Followers",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: appBlack),
+                            ),
+                            Text(
+                              "Following",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: appBlack),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                        width: 250,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              "${data.followlist!.follower.toString()}K",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: appBlack),
+                            ),
+                            Text(
+                              "${data.followlist!.following.toString()}K",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: appBlack),
+                            ),
+                          ],
+                        ),
+                      ),
+                      h10,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevetedButtonWidget(
+                              onPressed: () {},
+                              height: 50,
+                              width: 200,
+                              title: "Follow"),
+                          ElevetedButtonWidget(
+                            btncolor: appBlueLight,
+                            onPressed: () {},
+                            height: 50,
+                            width: 100,
+                            title: "Message",
+                          )
+                        ],
+                      ),
+                      h20,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevetedButtonWidget(
+                            onPressed: () {},
+                            height: 40,
+                            width: 50,
+                            title: "Rates 132",
+                            btncolor: appwiteLight,
+                            textColor: appBlack,
+                          ),
+                          ElevetedButtonWidget(
+                            onPressed: () {},
+                            height: 40,
+                            width: 50,
+                            title: "visited 132",
+                            btncolor: appBlueLight,
+                          ),
+                          ElevetedButtonWidget(
+                            onPressed: () {},
+                            height: 40,
+                            width: 50,
+                            title: "fav0rates 132",
+                            btncolor: appwiteLight,
+                            textColor: appBlack,
+                          )
+                        ],
+                      ),
+                      Expanded(child: Obx(() {
+                        if (restorentController.loding.value) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (restorentController.restorent.isEmpty) {
+                          return const Center(
+                            child: Text("No Data Available"),
+                          );
+                        }
+                        return ListView.separated(
+                          itemCount: restorentController.restorent.length,
+                          separatorBuilder: (context, index) => h10,
+                          itemBuilder: (context, index) {
+                            final data = restorentController.restorent[index];
+                            return CustomerTaileWidget(
+                              buildingNmae: data.nameEn!,
+                              image: imgUrl + data.logo!,
+                              customerNmae:
+                                  "${data.branchCount.toString()} Items",
+                              type: "0",
+                            );
+                          },
+                        );
+                      }))
+                    ],
+                  );
+                }),
+              ),
+            )
+          ],
+        ));
+  }
+}
 
 class ProfileModels {
   String? message;

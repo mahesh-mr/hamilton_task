@@ -25,8 +25,10 @@ class RegisterService {
         "UserName": userName
       });
       print("${responce.data}");
-      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // SharedPreferences pref = await SharedPreferences.getInstance();
 
+      prefs.setString("token", responce.data['token']);
       // prefs.setString("token", responce.data['token']);
 
       // ignore: deprecated_member_use

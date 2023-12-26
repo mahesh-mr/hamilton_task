@@ -4,14 +4,15 @@ import '../../model/login_model.dart';
 import '../../model/profile_model.dart';
 import '../services/profile_service.dart';
 
-class ProfileController extends GetxController {
+
+class ProfilesController extends GetxController {
   RxBool loding = true.obs;
-  RxList<Profile> profile = <Profile>[].obs;
+  RxList<Profiles> profile = <Profiles>[].obs;
   //LoginModel loginModel = LoginModel();
 
-  Future<List<Profile>?> getProfileService() async {
+  Future<List<Profiles>?> getProfileService() async {
     try {
-      var data = await ProfileService.profile();
+      var data = await ProfileServices.profile();
 
       loding.value = false;
       return data;

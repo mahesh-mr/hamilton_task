@@ -23,7 +23,17 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: RegisterScreen(),
+      home:checkToken()!=true ?HomeScreen(): LoginScreen(),
     );
+  }
+
+  Future<bool> checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      return true;
+    }
+
+    return false;
   }
 }

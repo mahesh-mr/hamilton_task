@@ -27,7 +27,7 @@ print("object : ${responce.data['user']['client_id']}");
       SharedPreferences prefs = await SharedPreferences.getInstance();
        // SharedPreferences pref = await SharedPreferences.getInstance();
 
-      prefs.setString("token", responce.data['token']);
+   //   prefs.setString("token", responce.data['token']);
       prefs.setInt('clientId', responce.data['user']['client_id']);
 
     // final id =  prefs.getString('client_id');

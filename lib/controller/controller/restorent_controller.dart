@@ -14,7 +14,7 @@ class RestorentController extends GetxController {
   Future<List<Restorent>?> getRestorent() async {
     try {
       var data = await RestorentService.restorent();
-
+print(data);
       loding.value = false;
       return data;
     } catch (e) {

@@ -9,6 +9,7 @@ class ElevetedButtonWidget extends StatelessWidget {
     required this.height,
     required this.width,
     required this.title,
+    this.textColor =appBackground,
     this.btncolor = appBlue,
   }) : super(key: key);
   final VoidCallback onPressed;
@@ -16,6 +17,7 @@ class ElevetedButtonWidget extends StatelessWidget {
   final double width;
   final String title;
   final Color? btncolor;
+   final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,6 @@ class ElevetedButtonWidget extends StatelessWidget {
             minimumSize: Size(width, height),
             elevation: 0),
         onPressed: onPressed,
-        child: Text(title));
+        child: Text(title,style: TextStyle(color: textColor),));
   }
 }

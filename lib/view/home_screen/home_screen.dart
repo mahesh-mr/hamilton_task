@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hamilton_task/view/profile_screen/profile_screen.dart';
 import 'package:hamilton_task/view/restorent_screen/restorent_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../const/const.dart';
 import '../const/size.dart';
 import '../widgets/custom_appbar.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     
       backgroundColor: appBackground,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
